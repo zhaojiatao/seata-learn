@@ -1,0 +1,56 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: storage-service
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    username: root
+    password: root
+    url: jdbc:mysql://127.0.0.1:3306/it235_storage?serverTimezone=GMT&autoReconnect=true&useUnicode=true&characterEncoding=UTF8&useSSL=false&tcpKeepAlive=true&allowMultiQueries=true
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 10.137.12.81:8848
+        register-enabled: true
+        namespace: SEATA_GROUP_DEV
+      config:
+        server-addr: 10.137.12.81:8848
+        enabled: true
+        file-extension: yaml
+        namespace: SEATA_GROUP_DEV
+seata:
+  enabled: true
+  application-id: ${spring.application.name}
+  # 事务群组（可以每个应用独立取名，也可以使用相同的名字），要与服务端nacos-config.txt中serv
+  tx-service-group: ${spring.application.name}_tx_group
+  config:
+    type: nacos
+    # 需要和server在同一个注册中心下
+    nacos:
+      namespace: SEATA_GROUP_DEV
+      serverAddr: 10.137.12.81:8848
+      # 需要server端(registry和config)、nacos配置client端(registry和config)保持一致
+      group: SEATA_GROUP
+      username: "nacos"
+      password: "nacos"
+  registry:
+    type: nacos
+    nacos:
+      # 需要和server端保持一致，即server在nacos中的名称，默认为seata-server
+      application: seata-server
+      server-addr: 10.137.12.81:8848
+      group: SEATA_GROUP
+      namespace: SEATA_GROUP_DEV
+      username: "nacos"
+      password: "nacos"
+mybatis:
+  mapperLocations: classpath:mapper/*.xml
+
+# feign组件超时设置，用于查看seata数据库中的临时数据内容
+feign:
+  client:
+    config:
+      default:
+        connect-timeout: 30000
+        read-timeout: 30000

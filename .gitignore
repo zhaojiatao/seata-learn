@@ -1,0 +1,4 @@
+# Project exclude paths
+/AT-Model/business-service/target/
+/AT-Model/order-service/target/
+/AT-Model/storage-service/target/
